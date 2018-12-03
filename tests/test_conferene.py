@@ -13,25 +13,31 @@ class TestConference(unittest.TestCase):
         self.assertEqual(len(c.anthologies), 4)
 
         for i, k in enumerate(c.anthologies):
+            a = c.anthologies[k]
             if i == 0:
                 self.assertEqual(k, "J00-1")
-                self.assertEqual(c.anthologies[k], "Computational Linguistics, Volume 26, Number 1, March 2000")
+                self.assertEqual(a.name, "Computational Linguistics, Volume 26, Number 1, March 2000")
+                self.assertEqual(a.count, 7)
             elif i == 1:
                 self.assertEqual(k, "J00-2")
-                self.assertEqual(c.anthologies[k], "Computational Linguistics, Volume 26, Number 2, June 2000")
+                self.assertEqual(a.name, "Computational Linguistics, Volume 26, Number 2, June 2000")
+                self.assertEqual(a.count, 18)
             elif i == 2:
                 self.assertEqual(k, "J00-3")
-                self.assertEqual(c.anthologies[k], "Computational Linguistics, Volume 26, Number 3, September 2000")
+                self.assertEqual(a.name, "Computational Linguistics, Volume 26, Number 3, September 2000")
+                self.assertEqual(a.count, 12)
             elif i == 3:
                 self.assertEqual(k, "J00-4")
-                self.assertEqual(c.anthologies[k], "Computational Linguistics, Volume 26, Number 4, December 2000")
+                self.assertEqual(a.name, "Computational Linguistics, Volume 26, Number 4, December 2000")
+                self.assertEqual(a.count, 14)
 
     def test_retrieve_from_element(self):
         element = BeautifulSoup(PAGE.strip(), "html.parser")
         c = Conference("http://dummy")
-        papers = c.retrieve_from_element(element, "J00-1")
+        result = c.retrieve_from_element(element, "J00-1")
+        papers = result.papers
         self.assertEqual(len(papers), 1)
-        for k in papers:
+        for k in result.papers:
             self.assertEqual(k, "J00-1")
             self.assertEqual(len(papers[k]), 7)
             self.assertEqual(papers[k][0].title, "Introduction to the Special Issue on Finite-State Methods in NLP")
@@ -39,8 +45,9 @@ class TestConference(unittest.TestCase):
 
     def test_retrieve_from_url(self):
         c = Conference.ACL(2018)
-        papers = c.retrieve("P18-5")
-        self.assertEqual(len(papers), 1)
+        result = c.retrieve("P18-5")
+        self.assertEqual(len(result.papers), 1)
+        papers = result.papers
         for k in papers:
             self.assertEqual(k, "P18-5")
             self.assertEqual(len(papers[k]), 9)

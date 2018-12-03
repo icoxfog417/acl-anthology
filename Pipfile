@@ -6,12 +6,14 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 flake8 = "*"
+twine = "*"
 
 [packages]
 requests = "*"
 beautifulsoup4 = "*"
 arxiv = "*"
 tqdm = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.7"

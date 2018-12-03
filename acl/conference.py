@@ -1,7 +1,9 @@
 import requests
 import time
 from bs4 import BeautifulSoup, Comment
+from tqdm import tqdm
 from acl.paper import Paper
+from acl.result_set import ResultSet
 
 
 class Conference():
@@ -45,6 +47,10 @@ class Conference():
         papers = {}
 
         for t in targets:
+            print("Download {}.".format(t))
+            paper_count = self.anthologies[t].count
+            pbar = tqdm(total=paper_count)
+
             papers[t] = []
             cursor = page.find("h4", {"id": t})
             cursor = cursor.next_element
@@ -62,10 +68,16 @@ class Conference():
                 p = Paper.create_from_page(url, with_arxiv)
                 if p is not None:
                     papers[t].append(p)
+                    pbar.update(1)
+                    if len(papers) == paper_count:
+                        break
+
                 time.sleep(interval)
                 cursor = cursor.next_element
+            pbar.close()
 
-        return papers
+        r = ResultSet(papers, with_arxiv)
+        return r
 
     def set_anthology(self, element):
         sections = element.find_all("h4")
@@ -87,9 +99,18 @@ class Conference():
                 continue
 
             items = row.find_all("td")
-            if len(items) >= 2:
+            if len(items) >= 3:
                 anthology_id = items[0].get_text().strip()
-                anthology_name = items[1].get_text().strip()
-                self.anthologies[anthology_id] = anthology_name
+                name = items[1].get_text().strip()
+                count = int(items[2].get_text().strip())
+                a = Anthology(name, count)
+                self.anthologies[anthology_id] = a
 
         return self
+
+
+class Anthology():
+
+    def __init__(self, name, count):
+        self.name = name
+        self.count = count

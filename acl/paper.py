@@ -55,6 +55,8 @@ class Paper():
             value = value.get_text().strip()
             if attr == "Anthology":
                 paper[attr] = value
+            elif attr == "Author":
+                paper["Authors"] = [value]
             elif attr == "Authors":
                 value = value.split("|")
                 value = tuple([v.strip() for v in value])
