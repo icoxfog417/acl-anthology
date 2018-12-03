@@ -2,6 +2,8 @@
 
 Script to get [ACL Anthology](https://aclanthology.info/)
 
+[Pre-downloaded data is available at Kaggle](https://www.kaggle.com/takahirokubo0/acl-anthology-papers/home)
+
 
 ## Install
 
