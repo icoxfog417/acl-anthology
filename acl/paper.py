@@ -33,20 +33,26 @@ class Paper():
             if not r.ok:
                 return None
 
-        title_link = _page.find("h2").findAll("a")[-1]
+        title_link = _page.find("h2").find_all("a")[-1]
         title = title_link.get_text()
         month_dict = dict((v, k) for k, v in
                           enumerate(calendar.month_abbr))
 
         attributes = _page.find("dl", {"class": "dl-horizontal"})
-        paper = {}
-        for item in attributes.findAll("dt"):
-            value = item.findNext("dd")
+        paper = {
+            "Anthology": "",
+            "Authors": (),
+            "Venue": "",
+            "Year": "",
+            "Month": "",
+            "URL": ""
+        }
+        for item in attributes.find_all("dt"):
+            value = item.find_next("dd")
             if value is None:
                 continue
             attr = item.get_text().strip().replace(":", "")
             value = value.get_text().strip()
-            print(attr)
             if attr == "Anthology":
                 paper[attr] = value
             elif attr == "Authors":
