@@ -34,7 +34,7 @@ class Paper():
                 return None
 
         title_link = _page.find("h2").find_all("a")[-1]
-        title = title_link.get_text()
+        title = title_link.get_text().strip()
         month_dict = dict((v, k) for k, v in
                           enumerate(calendar.month_abbr))
 
