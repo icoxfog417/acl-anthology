@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="acl-anthology",
-    version="0.1.1",
+    version="0.1.3",
     description="Get ACL Anthology Papers.",
     keywords=["machine learning", "nlp", "natural language processing"],
     author="icoxfog417",

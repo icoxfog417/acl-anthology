@@ -52,19 +52,11 @@ class Conference():
             pbar = tqdm(total=paper_count)
 
             papers[t] = []
-            cursor = page.find("h4", {"id": t})
-            cursor = cursor.next_element
-            while cursor is not None and cursor.name not in ["h4", "div"]:
-                if isinstance(cursor, Comment):
-                    cursor = cursor.next_element
-                    continue
-
-                if cursor.name != "p":
-                    cursor = cursor.next_element
-                    continue
-
-                href = cursor.find("strong").find("a").get("href")
-                url = "https://aclanthology.info" + href
+            area = page.find("div", {"id": t.lower()})
+            _papers = area.find_all("p")
+            for p in _papers:
+                href = p.find("strong").find("a").get("href")
+                url = "https://www.aclweb.org" + href
                 p = Paper.create_from_page(url, with_arxiv)
                 if p is not None:
                     papers[t].append(p)
@@ -73,38 +65,21 @@ class Conference():
                         break
 
                 time.sleep(interval)
-                cursor = cursor.next_element
             pbar.close()
 
         r = ResultSet(papers, with_arxiv)
         return r
 
     def set_anthology(self, element):
-        sections = element.find_all("h4")
-        content = None
-        for s in sections:
-            title = s.get_text()
-            title = title.lower().replace(" ", "")
-            if title == "tableofcontents":
-                content = s
-                break
-
-        if content is None:
-            return self
-
-        header = True
-        for row in content.find_next("table").find_all("tr"):
-            if header:
-                header = False
-                continue
-
-            items = row.find_all("td")
-            if len(items) >= 3:
-                anthology_id = items[0].get_text().strip()
-                name = items[1].get_text().strip()
-                count = int(items[2].get_text().strip())
-                a = Anthology(name, count)
-                self.anthologies[anthology_id] = a
+        contents = element.find("ul", {"class": "list-pl-responsive"})
+        for c in contents.find_all("li"):
+            title = c.find("a")
+            name = title.get_text().strip()
+            anthology_id = title.get("href").replace("#", "").upper()
+            count_element = title.find_next("span")
+            count = int(count_element.get_text().split()[0])
+            a = Anthology(name, count)
+            self.anthologies[anthology_id] = a
 
         return self
 

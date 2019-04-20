@@ -33,36 +33,45 @@ class Paper():
             if not r.ok:
                 return None
 
-        title_link = _page.find("h2").find_all("a")[-1]
-        title = title_link.get_text().strip()
-        month_dict = dict((v, k) for k, v in
-                          enumerate(calendar.month_abbr))
+        title_el = _page.find("h2", {"id": "title"}).find("a")
+        title = title_el.get_text().strip()
 
-        attributes = _page.find("dl", {"class": "dl-horizontal"})
+        authors_el = title_el.find_next("p", {"class": "lead"})
+        authors = ()
+        if authors_el:
+            authors = authors_el.find_all("a")
+            authors = tuple(a.get_text().strip() for a in authors
+                            if a.get("href").startswith("/anthology/people/"))
+
+        area = _page.find("div", {"class": "acl-paper-details"})
+        abstract_el = area.find("div", {"class": "acl-abstract"})
+        abstract = ""
+        if abstract_el:
+            abstract_el.find("h5").decompose()
+            abstract = abstract_el.get_text().strip()
+
+        attributes = area.find("dl")
         paper = {
-            "Anthology": "",
-            "Authors": (),
+            "Anthology ID": "",
             "Venue": "",
             "Year": "",
             "Month": "",
             "URL": ""
         }
+        month_dict = dict((v, k) for k, v in
+                          enumerate(calendar.month_name))
+
         for item in attributes.find_all("dt"):
             value = item.find_next("dd")
             if value is None:
                 continue
             attr = item.get_text().strip().replace(":", "")
             value = value.get_text().strip()
-            if attr == "Anthology":
-                paper[attr] = value
-            elif attr == "Author":
-                paper["Authors"] = [value]
-            elif attr == "Authors":
-                value = value.split("|")
-                value = tuple([v.strip() for v in value])
+            if attr == "Anthology ID":
                 paper[attr] = value
             elif attr == "Month":
-                value = month_dict[value[:3]]
+                value = value.split("-")[0]
+                value = month_dict[value]
                 paper[attr] = str(value)
             elif attr == "Year":
                 paper[attr] = value
@@ -72,10 +81,11 @@ class Paper():
                 paper[attr] = value
 
         instance = cls(
-            paper["Anthology"], title, paper["Authors"],
+            paper["Anthology ID"], title, authors,
             paper["Venue"], paper["Year"], paper["Month"],
             paper["URL"]
         )
+        instance.abstract = abstract
 
         if with_arxiv:
             abstract, url = cls.get_arxiv(title)
