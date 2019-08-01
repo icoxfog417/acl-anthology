@@ -25,7 +25,7 @@ class Conference():
         url = "https://aclanthology.info/events/{}-{}".format(name, year)
         return Conference(url)
 
-    def retrieve(self, anthology="", interval=1.0,
+    def retrieve(self, anthology="", interval=0.5,
                  with_arxiv=False):
         r = requests.get(self.url)
         page = BeautifulSoup(r.content, "html.parser")

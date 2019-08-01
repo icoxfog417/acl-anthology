@@ -110,14 +110,15 @@ class Paper():
         obj = {
             "anthology_id": self.anthology_id,
             "title": self.title,
-            "authors": self.authors,
+            "authors": ",".join(self.authors),
             "venue": self.venue,
             "year": self.year,
             "month": self.month,
-            "acl_url": self.acl_url
+            "acl_url": self.acl_url,
+            "abstract": self.abstract
         }
+
         if with_arxiv:
             obj["arxiv_url"] = self.arxiv_url
-            obj["abstract"] = self.abstract
 
         return obj
