@@ -22,7 +22,7 @@ class Conference():
 
     @classmethod
     def _make_conference(cls, name, year):
-        url = "https://aclanthology.info/events/{}-{}".format(name, year)
+        url = "https://aclweb.org/anthology/events/{}-{}".format(name, year)
         return Conference(url)
 
     def retrieve(self, anthology="", interval=0.5,
