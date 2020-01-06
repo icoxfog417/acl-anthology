@@ -14,10 +14,10 @@ setup(
         ],
     url="https://github.com/icoxfog417/acl-anthology",
     install_requires=[
-        "requests>=2.20.1",
-        "beautifulsoup4>=4.6.3",
-        "arxiv>=0.2.2",
-        "pandas>=0.23.4",
-        "tqdm>=4.28.1"
+        "requests>=2.22.0",
+        "beautifulsoup4>=4.8.2",
+        "arxiv>=0.5.1",
+        "pandas>=0.25.3",
+        "tqdm>=4.41.1"
     ],
 )

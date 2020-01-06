@@ -96,7 +96,7 @@ class Paper():
 
     @classmethod
     def get_arxiv(cls, title):
-        results = arxiv.query(search_query=title, max_results=1)
+        results = arxiv.query(query=title, max_results=1)
         if len(results) > 0:
             paper = results[0]
             abstract = paper.summary.replace("\n", " ")
